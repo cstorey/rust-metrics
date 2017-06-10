@@ -28,6 +28,7 @@ use std::sync::{Arc, RwLock};
 use std::thread;
 use std::hash::{Hash, Hasher};
 use std::collections::hash_map::DefaultHasher;
+use std::net::ToSocketAddrs;
 
 // http handler storage
 #[derive(Copy, Clone)]
@@ -70,7 +71,7 @@ pub struct PrometheusReporter {
 }
 
 impl PrometheusReporter {
-    pub fn new(host_and_port: &'static str) -> Self {
+    pub fn new<A: ToSocketAddrs + Send + 'static>(host_and_port: A) -> Self {
         let reporter = PrometheusReporter {
             // TODO make it configurable
             cache: Arc::new(RwLock::new(LruCache::new(86400)))
