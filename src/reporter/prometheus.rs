@@ -148,7 +148,7 @@ fn collect_to_send(metric_msgs: &mpsc::Receiver<Result<ReporterMsg, &'static str
     let mut add_entries_group = HashMap::<String, Vec<PrometheusMetricEntry>>::new();
     let mut remove_entries = Vec::<String>::new();
     // Group them by name TODO we should include tags and types in the grouping
-    for msg in metric_msgs {
+    for msg in metric_msgs.try_iter() {
         match msg {
             Ok(ReporterMsg::AddMetric(name, metric, labels)) => {
                 let entry = PrometheusMetricEntry {
