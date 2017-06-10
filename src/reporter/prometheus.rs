@@ -20,6 +20,7 @@ use std::collections::HashMap;
 use std::sync::mpsc;
 use reporter::{Reporter, ReporterMsg};
 use self::protobuf::repeated::RepeatedField;
+use std::net::ToSocketAddrs;
 
 struct PrometheusMetricEntry {
     name: String,
@@ -67,7 +68,7 @@ impl Reporter for PrometheusReporter {
 }
 
 impl PrometheusReporter {
-    pub fn new(reporter_name: &'static str, host_and_port: &'static str, delay_ms: u64) -> Self {
+    pub fn new<A: ToSocketAddrs + Send + 'static>(reporter_name: &'static str, host_and_port: A, delay_ms: u64) -> Self {
         let (tx, rx) = mpsc::channel();
         PrometheusReporter {
             reporter_name: reporter_name,
